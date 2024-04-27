@@ -170,3 +170,71 @@ const MyComponent = () => {
 
 这些是 React 中最重要的核心 Hook。它们提供了丰富的功能，帮助开发者在函数组件中实现状态管理、副作用处理、复杂逻辑、优化性能等需求。
 通过灵活使用这些 Hook，开发者可以构建更加简洁、模块化和高效的 React 组件。
+
+
+
+-------------------------------------------------------------------------------------------------
+
+useEffect 是 React 中的一个核心 Hook，主要用于在函数组件中处理副作用（side effects）。副作用是指组件在渲染过程中产生的额外行为，这些行为通常不直接影响组件的输出，但可能影响组件的生命周期、状态、或者与外部系统的交互。
+
+useEffect 的用法
+useEffect Hook 允许开发者在组件的生命周期中指定副作用的行为。它的基本用法是：
+
+```js
+import React, { useEffect } from 'react';
+
+const MyComponent = () => {
+  useEffect(() => {
+    console.log('Component mounted');
+
+    return () => {
+      console.log('Component unmounted');
+    };
+  }, []); // 依赖数组为空，表示只在组件挂载和卸载时运行
+
+  return <div>My Component</div>;
+};
+
+export default MyComponent;
+```
+
+主要功能
+组件挂载和卸载：当组件首次渲染时，useEffect 内的代码会运行。这相当于组件挂载（mount）。当组件从页面中移除时，useEffect 内的返回函数（清理函数）会运行，这相当于组件卸载（unmount）。
+依赖变化：useEffect 可以接收一个依赖数组。数组中的元素是状态或道具（props），当这些依赖发生变化时，useEffect 会重新执行。如果依赖数组为空，useEffect 只在组件挂载和卸载时运行。
+```js
+import React, { useState, useEffect } from 'react';
+
+const Counter = () => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    console.log('Effect ran because count changed');
+
+    return () => {
+      console.log('Cleanup when count changes');
+    };
+  }, [count]); // 当 count 变化时，effect 和 cleanup 会运行
+
+  return (
+    <div>
+      <p>Count: {count}</p>
+      <button onClick={() => setCount(count + 1)}>Increment</button>
+    </div>
+  );
+};
+
+export default Counter;
+```
+
+常见用例
+- 数据获取：在组件挂载时发起网络请求，并在组件卸载时取消请求。
+- 事件监听：在组件挂载时添加事件监听器，并在组件卸载时移除它。
+- 订阅和取消订阅：在组件挂载时订阅外部数据源，并在组件卸载时取消订阅。
+- DOM 操作：在组件挂载后进行 DOM 操作，确保组件正确渲染。
+  
+注意事项
+避免无限循环：在 useEffect 中改变依赖项可能导致无限循环。确保在 useEffect 内部的状态更新不会触发额外的 useEffect 调用。
+确保清理：如果 useEffect 内部创建了副作用（如事件监听器、计时器等），务必在清理函数中正确清理。
+
+
+useEffect 是 React 函数组件中处理副作用的主要工具。它提供了灵活的方式来在组件生命周期中管理数据获取、事件监听、订阅等操作。通过依赖数组，可以控制 useEffect 何时运行以及何时清理，确保组件在不同状态下保持正确的行为。
